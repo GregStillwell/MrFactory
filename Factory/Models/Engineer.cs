@@ -13,6 +13,6 @@ namespace Factory.Models
     [Required]
     public string Name {get; set;}
     public string Description {get; set;  }
-    public List<CourseStudent> JoinEntities {get; set;}
+    public List<EngineerMachine> JoinEntities {get; set;}
   }
 }
