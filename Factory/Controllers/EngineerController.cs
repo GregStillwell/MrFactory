@@ -7,32 +7,34 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Factory.Controllers
 {
-  public class MachineController : Controller
+  public class EngineerController : Controller
   {
     private readonly FactoryContext _db;
 
-    public MachineController(FactoryContext db)
+    public EngineerController(FactoryContext db)
     {
       _db = db;
     }
+
     public ActionResult Index()
     {
-      ViewBag.PageTitle = "All Machine";
-      return View(_db.Machines.ToList());
+      ViewBag.PageTitle = "All Engineer";
+      return View(_db.Engineers.ToList());
     }
 
     public ActionResult Create()
     {
-      ViewBag.PageTitle = "Add a Machine";
+      ViewBag.PageTitle = "Add an Engineer";
       return View();
     }
 
     [HttpPost]
-    public ActionResult Create(Machine machine)
+    public ActionResult Create(Engineer engineer)
     {
-      _db.Machines.Add(machine);
+      _db.Engineers.Add(engineer);
       _db.SaveChanges();
       return RedirectToAction("Index");
     }
+
   }
 }
