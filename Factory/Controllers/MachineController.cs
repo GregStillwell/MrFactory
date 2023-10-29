@@ -27,12 +27,17 @@ namespace Factory.Controllers
       return View();
     }
 
-    [HttpPost]
-    public ActionResult Create(Machine machine)
+   
+
+    public ActionResult Details(int id)
     {
-      _db.Machines.Add(machine);
-      _db.SaveChanges();
-      return RedirectToAction("Index");
+      ViewBag.PageTitle = "Machine Details";
+      Machine thisMachine = _db.Machines
+        .Include(machine => machine.JoinEntities)
+        .ThenInclude(join => join.Engineer)
+        .FirstOrDefault(machine => machine.MachineId == id);
+      return View(thisMachine);
     }
+
   }
 }
