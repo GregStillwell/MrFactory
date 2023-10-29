@@ -7,24 +7,22 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Factory.Controllers
 {
-  public class EngineerController : Controller
+  public class EngineersController : Controller
   {
     private readonly FactoryContext _db;
 
-    public EngineerController(FactoryContext db)
+    public EngineersController(FactoryContext db)
     {
       _db = db;
     }
 
     public ActionResult Index()
     {
-      ViewBag.PageTitle = "Add Engineer";
       return View(_db.Engineers.ToList());
     }
 
     public ActionResult Create()
     {
-      ViewBag.PageTitle = "Add an Engineer";
       return View();
     }
 
@@ -36,34 +34,24 @@ namespace Factory.Controllers
       return RedirectToAction("Index");
     }
 
-     public ActionResult Details(int id)
-      {
-        ViewBag.PageTitle = "Engineer Details";
-        Engineer thisEngineer = _db.Engineers
-        .Include(engineer => engineer.JoinEntities)
-        .ThenInclude(join => join.Machine)
-        .FirstOrDefault(engineer => engineer.EngineerId == id);
-        return View(thisEngineer);
-      }
-
-    public ActionResult Edit(int Id)
+    public ActionResult Details(int id)
     {
-      ViewBag.PageTitle = "Edit Engineer";
       Engineer thisEngineer = _db.Engineers
-      .Include(engineer => engineer.JoinEntities)
-      .ThenInclude(join => join.Machine)
-      .FirstOrDefault(engineer => engineer.EngineerId == Id);
+                                .Include(engineer => engineer.JoinEntities)
+                                .ThenInclude(joinEntity => joinEntity.Machine)
+                                .FirstOrDefault(eng => eng.EngineerId == id);
       return View(thisEngineer);
     }
-     
+
+    public ActionResult Edit(int id)
+    {
+      Engineer thisEngineer = _db.Engineers.FirstOrDefault(engineer => engineer.EngineerId == id);
+      return View(thisEngineer);
+    }
+
     [HttpPost]
     public ActionResult Edit(Engineer engineer)
     {
-       if (!ModelState.IsValid)
-      {
-        ModelState.AddModelError("", "Please correct the errors and try again.");
-        return View(engineer);
-      }
       _db.Engineers.Update(engineer);
       _db.SaveChanges();
       return RedirectToAction("Index");
@@ -71,7 +59,6 @@ namespace Factory.Controllers
 
     public ActionResult Delete(int id)
     {
-      ViewBag.PageTitle = "Delete Engineer";
       Engineer thisEngineer = _db.Engineers.FirstOrDefault(engineer => engineer.EngineerId == id);
       return View(thisEngineer);
     }
@@ -85,28 +72,26 @@ namespace Factory.Controllers
       return RedirectToAction("Index");
     }
 
-      public ActionResult AddMachine(int id)
-      {
-        ViewBag.PageTitle = "Add Machine";
-        Engineer thisEngineer = _db.Engineers.FirstOrDefault(engineer => engineer.EngineerId == id);
-      
-        ViewBag.MachineId = new SelectList(_db.Machines, "MachineId", "Model");
-        return View(thisEngineer);
-      }
+    public ActionResult AddMachine(int id)
+    {
+      Engineer thisEngineer = _db.Engineers.FirstOrDefault(engineers => engineers.EngineerId == id);
+      ViewBag.MachineId = new SelectList(_db.Machines, "MachineId", "Name");
+      return View(thisEngineer);
+    }
 
     [HttpPost]
     public ActionResult AddMachine(Engineer engineer, int MachineId)
     {
       #nullable enable
-      EngineerMachine? joinEntity = _db.EngineerMachines.FirstOrDefault(join => join.EngineerId == engineer.EngineerId && join.MachineId == MachineId);
+      EngineerMachine? joinEntity = _db.EngineerMachines.FirstOrDefault(join => (join.MachineId == MachineId && join.EngineerId == engineer.EngineerId));
       #nullable disable
-      if (MachineId != 0 && joinEntity == null)
+      if (joinEntity == null && MachineId != 0)
       {
         _db.EngineerMachines.Add(new EngineerMachine() { MachineId = MachineId, EngineerId = engineer.EngineerId });
         _db.SaveChanges();
       }
       return RedirectToAction("Details", new { id = engineer.EngineerId });
-    }
+    }   
 
     [HttpPost]
     public ActionResult DeleteJoin(int joinId)
@@ -114,12 +99,7 @@ namespace Factory.Controllers
       EngineerMachine joinEntry = _db.EngineerMachines.FirstOrDefault(entry => entry.EngineerMachineId == joinId);
       _db.EngineerMachines.Remove(joinEntry);
       _db.SaveChanges();
-      return RedirectToAction("Details", new { id = joinEntry.EngineerId });
-    }
-
-
-
-
-
+      return RedirectToAction("Index");
+    } 
   }
 }

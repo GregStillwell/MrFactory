@@ -8,9 +8,8 @@ namespace Factory.Models
 {
   public class Engineer
   {
-    [Required]
     public int EngineerId {get; set;}
-    [Required]
+    [Required(ErrorMessage = "Cannot leave engineer's name empty!")]
     public string Name {get; set;}
     public string Description {get; set;  }
     public List<EngineerMachine> JoinEntities {get; set;}

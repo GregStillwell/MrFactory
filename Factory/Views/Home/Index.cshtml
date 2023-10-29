@@ -1,37 +1,36 @@
 @{
   Layout = "_Layout";
 }
-
 @using Factory.Models;
 
-<h1>Welcome to the MrFactory</h1>
+<h1>Welcome to MrFactory</h1>
 
+<hr>
 
 <h4>Engineers</h4>
-@if (ViewBag.Engineers.Count == 0)
+@if (Model["engineers"].Length == 0)
 {
   <p>No engineers have been added yet!</p>
 } 
 <ul>
-  @foreach (Engineer engineer in ViewBag.Engineers)
+  @foreach (Engineer eng in Model["engineers"])
   {
-    <li>@Html.ActionLink($"{engineer.Name}", "Details", "Engineers", new { id = engineer.EngineerId})</li>
+    <li>@Html.ActionLink(@eng.Name, "Details", "Engineers", new { id = @eng.EngineerId})</li>
   }
 </ul>
 
 <h4>Machines</h4>
-@if (ViewBag.Machines.Count == 0)
+@if (Model["machines"].Length == 0)
 {
-  <p>No items have been added yet!</p>
+  <p>No Machines have been added yet!</p>
 } 
 <ul>
-  @foreach (Machine machine in ViewBag.Machines)
+  @foreach (Machine machine in Model["machines"])
   {
-    <li>@Html.ActionLink($"{machine.Model}", "Details", "Machines", new { id = machine.MachineId})</li>
+    <li>@Html.ActionLink(@machine.Model, "Details", "Machines", new { id = @machine.MachineId})</li>
   }
 </ul>
 
-<hr />
-
-<p>@Html.ActionLink("Manage machines", "Index", "Machines")</p> 
-<p>@Html.ActionLink("Manage engineers", "Index", "Engineers")</p>
+<hr>
+<p>@Html.ActionLink("See all Engineers", "Index", "Engineers")</p> 
+<p>@Html.ActionLink("See all Machines", "Index", "Machines")</p>
